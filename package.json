@@ -1,0 +1,16 @@
+{
+  "name": "weblearn",
+  "version": "0.0.1",
+  "description": "web develop learning",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.2.4",
+    "express": "^4.11.2",
+    "node-markdown": "^0.1.1"
+  }
+}
