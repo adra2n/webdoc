@@ -1,0 +1,18 @@
+html,body{height:100%;overflow: hidden;}
+.clear:after{clear:both;content:'.';display:block;height:0;visibility:hidden;}/* 清浮动 */
+.clear{*zoom:1;}
+header{height:60px;line-height:60px;padding:0 20px;background:#222;color:#999;border-bottom: 1px solid #080808;}
+header .brand,header .nav,header .nav li{float:left;}
+header .brand{width:250px;margin-right:20px;font-size:18px;}
+header .nav{font-size:14px;}
+header .nav a{display:block;padding:0 10px;color:#777;text-decoration:none;}
+header .nav a.z-sel{color:#fff;background:#080808;}
+.main{height:calc(100% - 60px);}
+aside{float:left;width:250px;height:calc(100% - 40px);padding:20px;background:#f8f8f8;}
+aside h1{font-size:14px;}
+aside h1{line-height:30px;}
+aside h1 a,aside h1 a:hover{color:#6F0101;}
+aside h2{line-height:24px;}
+aside h3,aside h4{line-height:20px;}
+aside h3 a,aside h3 a:hover{color:#999;}
+iframe{float:left;height:100%;width:calc(100% - 290px);}
