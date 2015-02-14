@@ -1,3 +1,5 @@
+var md = require('node-markdown').Markdown;
+var path = require('path');
 module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-concat');
@@ -5,10 +7,25 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
 
     // Default task.
     grunt.registerTask('default', ['build']);
-    grunt.registerTask('build', ['clean','concat', 'copy:images', 'cssmin']);
+    grunt.registerTask('build', ['clean','concat', 'copy:images', 'cssmin', 'uglify', 'markdown']);
+
+    grunt.registerMultiTask('markdown', 'Parse md file to html.', function(){
+        var tpl = grunt.file.read(this.data.tpl, {encoding:'utf-8'});
+        this.files.forEach(function(file){
+            var mdSrc = grunt.file.read(file.src[0],{encoding:'utf-8'});
+            var data = {
+                fragment:md(mdSrc),
+                style:path.relative(path.dirname(file.dest), this.data.style)
+            };
+            grunt.file.write(file.dest.replace(/\.md$/,'.html'),
+                grunt.template.process(tpl, {data:data}),
+                {encoding:'utf-8'});
+        }, this);
+    });
 
     // Project configuration.
     grunt.initConfig({
@@ -40,6 +57,42 @@ module.exports = function (grunt) {
                 options: {
                     process: true
                 }
+            }
+        },
+        uglify:{
+            target: {
+                files:[
+                    {
+                        expand:true,
+                        cwd:'src/js',
+                        src:['*.js'],
+                        dest:'<%= distdir %>/js'
+                    }
+                ]
+            }
+        },
+        markdown:{
+            target:{
+                tpl:'src/md.html',
+                style:'<%= distdir %>/css/markdown.css',
+                files:[{
+                    expand:true,
+                    cwd:'docs',
+                    src:['**/*.md'],
+                    dest:'<%= distdir %>/docs'
+                }]
+            }
+        },
+        hierarchy:{
+            target:{
+                files:[
+                    {
+                        expand:true,
+                        cwd:'docs',
+                        src:['**'],
+                        dest:'<%= distdir %>/docs/hierarchy.json'
+                    }
+                ]
             }
         },
         watch:{

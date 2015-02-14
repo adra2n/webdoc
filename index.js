@@ -8,7 +8,6 @@ var tpl = path.resolve(__dirname, 'template');
 var mdReg = /(.+)\.md/;
 clean(dest);
 var list = buildDir(src);
-debugger
 fs.writeFileSync(path.resolve(dest, 'index.html'), parseTpl('frame.ejs'), {encoding:'utf-8'})
 /**
  * 递归读取目录中文件
