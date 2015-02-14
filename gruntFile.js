@@ -1,5 +1,6 @@
 var md = require('node-markdown').Markdown;
 var path = require('path');
+var mdReg = /\.md$/;
 module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-concat');
@@ -10,21 +11,63 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
     // Default task.
-    grunt.registerTask('default', ['build']);
-    grunt.registerTask('build', ['clean','concat', 'copy:images', 'cssmin', 'uglify', 'markdown']);
-
+    grunt.registerTask('default', ['clean','doc']);
+    grunt.registerTask('doc', ['markdown', 'hierarchy']);
+    grunt.registerTask('build', ['clean','concat', 'copy:images', 'cssmin', 'uglify', 'doc']);
+    //解析md文件
     grunt.registerMultiTask('markdown', 'Parse md file to html.', function(){
-        var tpl = grunt.file.read(this.data.tpl, {encoding:'utf-8'});
+        var mdSrc,data,
+            tpl = grunt.file.read(this.data.tpl, {encoding:'utf-8'});
         this.files.forEach(function(file){
-            var mdSrc = grunt.file.read(file.src[0],{encoding:'utf-8'});
-            var data = {
-                fragment:md(mdSrc),
-                style:path.relative(path.dirname(file.dest), this.data.style)
-            };
-            grunt.file.write(file.dest.replace(/\.md$/,'.html'),
-                grunt.template.process(tpl, {data:data}),
-                {encoding:'utf-8'});
+            var src = file.src[0];
+            if(grunt.file.isDir(src)){
+                grunt.file.mkdir(file.dest);
+            }else if(mdReg.test(src)){
+                mdSrc = grunt.file.read(src,{encoding:'utf-8'});
+                data = {
+                    fragment:md(mdSrc),
+                    style:path.relative(path.dirname(file.dest), this.data.style)
+                };
+                grunt.file.write(file.dest.replace(/\.md$/,'.html'),
+                    grunt.template.process(tpl, {data:data}),
+                    {encoding:'utf-8'});
+            }else{
+                grunt.file.copy(src, file.dest);
+            }
+
         }, this);
+    });
+
+    grunt.registerMultiTask('hierarchy', 'Get the hierarchy of docs.',function(){
+        var conf = this.data.files[0],
+            map = {};
+        this.files.forEach(function(file){
+            var src = file.src[0],
+                parent = path.dirname(src),
+                parentData = map[parent],
+                ext = path.extname(src),
+                data = {
+                    name:path.basename(src),
+                    path:src,
+                    childs:[]
+                };
+            map[src] = data;
+            if(parentData){
+                if(data.name=='order.json'){
+                    parentData.order = grunt.file.readJSON(data.path);
+                }else{
+                    parentData.childs.push(data);
+                }
+            }
+            if(ext=='.html'){
+                data.link = src.split(path.sep).slice(1).join('/');
+            }
+
+        }, this);
+        var list = map[conf.cwd];
+        if(list&&list.childs){
+            grunt.file.write(conf.dest, JSON.stringify(list.childs), {encoding:'utf8'});
+        }
     });
 
     // Project configuration.
@@ -78,7 +121,7 @@ module.exports = function (grunt) {
                 files:[{
                     expand:true,
                     cwd:'docs',
-                    src:['**/*.md'],
+                    src:['**'],
                     dest:'<%= distdir %>/docs'
                 }]
             }
@@ -88,7 +131,7 @@ module.exports = function (grunt) {
                 files:[
                     {
                         expand:true,
-                        cwd:'docs',
+                        cwd:'<%= distdir %>/docs',
                         src:['**'],
                         dest:'<%= distdir %>/docs/hierarchy.json'
                     }
