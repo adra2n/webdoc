@@ -1,16 +1,23 @@
 {
-  "name": "weblearn",
+  "name": "webdoc",
   "version": "0.0.1",
-  "description": "web develop learning",
+  "description": "云音乐WEB组文档系统",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "webdev",
   "license": "ISC",
   "dependencies": {
     "ejs": "^2.2.4",
     "express": "^4.11.2",
-    "node-markdown": "^0.1.1"
+    "grunt": "~0.4.0",
+    "grunt-contrib-clean": "~0.4.0",
+    "grunt-contrib-concat": "~0.1.3",
+    "grunt-contrib-copy": "~0.4.0",
+    "grunt-contrib-cssmin": "^0.12.1",
+    "grunt-contrib-watch": "~0.3.1",
+    "node-markdown": "^0.1.1",
+    "open": "0.0.3"
   }
 }
