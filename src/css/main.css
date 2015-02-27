@@ -5,8 +5,9 @@ header{height:60px;line-height:60px;padding:0 20px;background:#222;color:#999;bo
 header .brand,header .nav,header .nav li{float:left;}
 header .brand{width:250px;margin-right:20px;font-size:18px;}
 header .nav{font-size:14px;}
-header .nav a{display:block;padding:0 10px;color:#777;text-decoration:none;}
+header .nav a{display:block;padding:0 10px;color:#777;text-decoration:none;cursor:default;}
 header .nav a.z-sel{color:#fff;background:#080808;}
+header .nav a[href]{cursor:pointer;}
 .main{height:calc(100% - 60px);}
 aside{float:left;width:250px;height:calc(100% - 40px);padding:20px;background:#f8f8f8;}
 aside h1{font-size:14px;}

@@ -11,9 +11,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
     // Default task.
-    grunt.registerTask('default', ['server']);
+    grunt.registerTask('default', ['debug']);
     grunt.registerTask('doc', ['markdown', 'hierarchy']);
-    grunt.registerTask('dev', ['clean', 'concat', 'copy', 'doc']);
+    grunt.registerTask('debug', ['clean', 'concat', 'copy', 'doc']);
     grunt.registerTask('build', ['clean','concat', 'copy:images', 'cssmin', 'uglify', 'doc']);
     //解析md文件
     grunt.registerMultiTask('markdown', 'Parse md file to html.', function(){
@@ -52,7 +52,7 @@ module.exports = function (grunt) {
             open('http://localhost:' + 1688 + '/');
         });
     });
-
+    //生成标题层级文件
     grunt.registerMultiTask('hierarchy', 'Get the hierarchy of docs.',function(){
         var conf = this.data.files[0],
             map = {};
@@ -160,13 +160,9 @@ module.exports = function (grunt) {
             }
         },
         watch:{
-            docs: {
-                files:['docs/**'],
-                tasks:['doc']
-            },
             src:{
                 files:['src/**'],
-                tasks:['dev']
+                tasks:['debug']
             }
         }
     });

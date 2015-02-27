@@ -1,19 +1,70 @@
 (function(){
-    var navMap = {},
+    var root,
         list = $('.j-flag'),
-        nnav = list[0],
-        nsnav = list[1];
-    $.getJSON('/webdoc/build/docs/hierarchy.json', onJsonLoad);
-    function onJsonLoad(result){
-        var htmls = [];
+        frame = $('#content-frame'),
+        nnav = list[0],//主导航
+        nsnav = list[1];//侧栏导航
+    /**
+     * 初始化
+     */
+    function init(){
+        $.getJSON('/docs/hierarchy.json', onHierarchyLoad);
+        //$(nnav).click(onNavClick);
+
+    };
+    /**
+     * hash变化回调
+     * @param hash
+     */
+    function onHashChange(hash){
+        var splits = hash.split('/'),
+            mnav = splits.shift(),
+            navs = $('a', nnav),
+            sdata = getNodeData(mnav);
+        navs.each(function(index, item){
+            item = $(item);
+            var href = item.attr('href');
+            if(href&&href.substring(1)==mnav){
+                item.addClass('z-sel');
+            }else{
+                item.removeClass('z-sel');
+            }
+        });
+        if(sdata){
+            nsnav.innerHTML = showList(sdata.childs, 1);
+        }
+        if(/\.html$/.test(hash)){
+            frame.attr('src', '/docs/'+hash);
+        }
+    };
+    /**
+     * 层级数据加载完回调
+     * @param result
+     */
+    function onHierarchyLoad(result){
+        root = {childs:result};
+        //渲染主导航
+        var htmls = [],
+            tpl = TrimPath.parseTemplate('<li><a {if href} href="#${href}"{/if}>${name}</a></li>');
         result.forEach(function(item){
-            var key = Math.round(Math.random()*1000000);
-            htmls.push(merge('<li><a data-id="{0}">{1}</a></li>', key, item.name));
-            navMap[key] = item.childs;
+            htmls.push(tpl.process({href:item.childs&&item.childs.length?formatPath(item.path):null, name:item.name}));
         });
         nnav.innerHTML = htmls.join('');
-        $(nnav).click(onNavClick);
+        Hash.init(onHashChange);
     };
+    function showList(list, depth){
+        var htmls = [],
+            tpl = TrimPath.parseTemplate('<h${depth}><a {if href} href="#${href}"{/if}>${name}</a></h${depth}>');
+        list.forEach(function(item){
+            htmls.push(tpl.process({depth:depth, href:formatPath(item.link), name:item.name}));
+            htmls.push(showList(item.childs, depth+1));
+        });
+        return htmls.join('');
+    };
+    /**
+     * 模版合并
+     * @returns {*}
+     */
     function merge(){
         var _args = Array.prototype.slice.call(arguments,0),
             _tpl = _args.shift();
@@ -24,28 +75,32 @@
         }
         return '';
     };
-    function onNavClick(event){
-        var node = event.srcElement;
-        if(node.tagName.toLowerCase()=='a'){
-            var navs = $('a', nnav);
-            navs.each(function(index, item){
-                $(item).removeClass('z-sel');
-            });
-            $(node).addClass('z-sel');
-            switchNav(node.dataset.id);
+    /**
+     * 获取路径下的数据
+     */
+    function getNodeData(path){
+        var all = [root];
+        if(!path) return root;
+        for(var i=0,ii;i<all.length;i++){
+            ii = all[i];
+            if(formatPath(ii.path)===path) return ii;
+            if(ii.childs&&ii.childs.length){
+                Array.prototype.push.apply(all, ii.childs);
+            }
         }
+
     };
-    function switchNav(id){
-        var data = navMap[id];
-        nsnav.innerHTML = showList(data, 1);
+    /**
+     * 格式化路径
+     * @param path
+     * @returns {*}
+     */
+    function formatPath(path){
+        if(/docs\/(.+)/.test(path)){
+            return RegExp.$1;
+        }
+        return path;
     };
-    function showList(list, depth){
-        var htmls = [],
-            tpl = '<h{0}><a target="content" href="{1}">{2}</a></h{0}>';
-        list.forEach(function(item){
-            htmls.push(merge(tpl, depth, item.link||'', item.name));
-            htmls.push(showList(item.childs, depth+1));
-        });
-        return htmls.join('');
-    };
+    //初始化
+    init();
 })();
