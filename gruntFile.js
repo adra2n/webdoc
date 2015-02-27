@@ -11,8 +11,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
     // Default task.
-    grunt.registerTask('default', ['clean','doc']);
+    grunt.registerTask('default', ['server']);
     grunt.registerTask('doc', ['markdown', 'hierarchy']);
+    grunt.registerTask('dev', ['clean', 'concat', 'copy', 'doc']);
     grunt.registerTask('build', ['clean','concat', 'copy:images', 'cssmin', 'uglify', 'doc']);
     //解析md文件
     grunt.registerMultiTask('markdown', 'Parse md file to html.', function(){
@@ -36,6 +37,20 @@ module.exports = function (grunt) {
             }
 
         }, this);
+    });
+
+    grunt.registerTask('server', 'Setup a node server.', function(){
+        var http = require('http');
+        var express = require('express');
+        var app = express();
+        var server = http.createServer(app);
+        app.use('/', express.static(__dirname + '/build'));
+
+        server.listen(8080, '0.0.0.0', 511, function() {
+            // // Once the server is listening we automatically open up a browser
+            var open = require('open');
+            open('http://localhost:' + 1688 + '/');
+        });
     });
 
     grunt.registerMultiTask('hierarchy', 'Get the hierarchy of docs.',function(){
@@ -81,6 +96,12 @@ module.exports = function (grunt) {
         copy: {
             images: {//复制图片
                 files: [{ dest: '<%= distdir %>', src : 'images/**', expand: true, cwd:'src'}]
+            },
+            js: {//复制js
+                files: [{ dest: '<%= distdir %>', src : 'js/**', expand: true, cwd:'src'}]
+            },
+            css: {//复制css
+                files: [{ dest: '<%= distdir %>', src : 'css/**', expand: true, cwd:'src'}]
             }
         },
         cssmin:{
@@ -139,13 +160,13 @@ module.exports = function (grunt) {
             }
         },
         watch:{
-            all: {
-                files:['<%= src.js %>', '<%= src.specs %>', '<%= src.lessWatch %>', '<%= src.tpl.app %>', '<%= src.tpl.common %>', '<%= src.html %>'],
-                tasks:['default','timestamp']
+            docs: {
+                files:['docs/**'],
+                tasks:['doc']
             },
-            build: {
-                files:['<%= src.js %>', '<%= src.specs %>', '<%= src.lessWatch %>', '<%= src.tpl.app %>', '<%= src.tpl.common %>', '<%= src.html %>'],
-                tasks:['build','timestamp']
+            src:{
+                files:['src/**'],
+                tasks:['dev']
             }
         }
     });
