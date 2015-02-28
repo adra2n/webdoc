@@ -1,7 +1,7 @@
 (function(){
     var root,
         list = $('.j-flag'),
-        frame = $('#content-frame'),
+        frame = $('#content-frame').get(0),
         nnav = list[0],//主导航
         nsnav = list[1];//侧栏导航
     /**
@@ -34,7 +34,9 @@
             nsnav.innerHTML = showList(sdata.childs, 1);
         }
         if(/\.html$/.test(hash)){
-            frame.attr('src', '/docs/'+hash);
+            frame.contentWindow.location.replace('/docs/'+hash);
+        }else{
+            frame.contentWindow.location.replace('about:blank');
         }
     };
     /**

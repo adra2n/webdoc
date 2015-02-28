@@ -16,4 +16,7 @@ aside h1 a,aside h1 a:hover{color:#6F0101;}
 aside h2{line-height:24px;}
 aside h3,aside h4{line-height:20px;}
 aside h3 a,aside h3 a:hover{color:#999;}
+aside a{cursor:default;}
+aside a:hover{text-decoration:none;}
+aside a[href]{cursor:pointer;}
 iframe{float:left;height:100%;width:calc(100% - 290px);}
