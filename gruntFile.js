@@ -81,6 +81,18 @@ module.exports = function (grunt) {
         }, this);
         var list = map[conf.cwd];
         if(list&&list.childs){
+            var alist = [list];
+            for(var i=0,ii;i<alist.length;i++){
+                ii = alist[i];
+                if(ii.childs){
+                    if(ii.order&&ii.order.length){
+                        ii.childs = ii.childs.sort(function(a, b){
+                            return ii.order.indexOf(a.name)-ii.order.indexOf(b.name);
+                        });
+                    }
+                    Array.prototype.push.call(alist,ii.childs);
+                }
+            }
             grunt.file.write(conf.dest, JSON.stringify(list.childs), {encoding:'utf8'});
         }
     });
