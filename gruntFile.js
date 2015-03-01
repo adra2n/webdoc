@@ -91,7 +91,7 @@ module.exports = function (grunt) {
                             return ii.order.indexOf(a.name)-ii.order.indexOf(b.name);
                         });
                     }
-                    Array.prototype.push.call(alist,ii.childs);
+                    Array.prototype.push.apply(alist,ii.childs);
                 }
             }
             grunt.file.write(conf.dest, JSON.stringify(list.childs), {encoding:'utf8'});
