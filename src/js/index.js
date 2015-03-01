@@ -1,5 +1,5 @@
 (function(){
-    var root,
+    var root,lastnav,
         list = $('.j-flag'),
         frame = $('#content-frame').get(0),
         nnav = list[0],//主导航
@@ -30,8 +30,17 @@
                 item.removeClass('z-sel');
             }
         });
-        if(sdata){
-            nsnav.innerHTML = showList(sdata.childs, 1);
+        if(lastnav!=mnav&&sdata){
+            lastnav = mnav;
+            $.jstree.destroy();
+            $(nsnav).jstree({ 'core' : {
+                'data' : formatList(sdata.childs||[], hash)
+            } }).on('changed.jstree', function(e, data){
+                var link = data.node.original.link;
+                if(link){
+                    location.hash = formatPath(link);
+                }
+            });
         }
         if(/\.html$/.test(hash)){
             frame.contentWindow.location.replace('/docs/'+hash);
@@ -102,6 +111,32 @@
             return RegExp.$1;
         }
         return path;
+    };
+    function formatList(nodes, hash){
+        var list = nodes.slice(0);
+        for(var i=0,ii;i<list.length;i++){
+            ii = list[i];
+            ii.text = ii.name.replace(/\.html$/, '');
+            ii.children = ii.childs;
+            ii.state = ii.state||{};
+            if(ii.link){
+                ii['a_attr'] = {href:'#'+formatPath(ii.link)};
+                ii.icon = 'jstree-file';
+                ii.state.disabled = false;
+                if(hash==formatPath(ii.link)){
+                    ii.state.selected = true;
+                }
+            }else{
+                ii.state.disabled = true;
+            }
+            if(hash.indexOf(formatPath(ii.path))>=0){
+                ii.state.opened = true;
+            }
+            if(ii.childs&&ii.childs.length){
+                Array.prototype.push.apply(list, ii.childs);
+            }
+        }
+        return nodes;
     };
     //初始化
     init();
