@@ -1,4 +1,5 @@
 var md = require('node-markdown').Markdown;
+var marked = require('marked');
 var path = require('path');
 var mdReg = /\.md$/;
 module.exports = function (grunt) {
@@ -26,7 +27,7 @@ module.exports = function (grunt) {
             }else if(mdReg.test(src)){
                 mdSrc = grunt.file.read(src,{encoding:'utf-8'});
                 data = {
-                    fragment:md(mdSrc),
+                    fragment:marked(mdSrc),
                     style:path.relative(path.dirname(file.dest), this.data.style)
                 };
                 grunt.file.write(file.dest.replace(/\.md$/,'.html'),

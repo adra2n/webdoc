@@ -61,6 +61,7 @@
             htmls.push(tpl.process({href:item.childs&&item.childs.length?formatPath(item.path):null, name:item.name}));
         });
         nnav.innerHTML = htmls.join('');
+        if(!location.hash) location.hash = result[0].name;
         Hash.init(onHashChange);
     };
     function showList(list, depth){
