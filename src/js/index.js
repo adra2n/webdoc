@@ -24,7 +24,7 @@
         navs.each(function(index, item){
             item = $(item);
             var href = item.attr('href');
-            if(href&&href.substring(1)==mnav){
+            if(href&&getRoot(href)==mnav){
                 item.addClass('z-sel');
             }else{
                 item.removeClass('z-sel');
@@ -36,6 +36,7 @@
             $(nsnav).jstree({ 'core' : {
                 'data' : formatList(sdata.childs||[], hash)
             } }).on('changed.jstree', function(e, data){
+                if(!data.node||!data.node.original) return;
                 var link = data.node.original.link;
                 if(link){
                     location.hash = formatPath(link);
@@ -58,7 +59,7 @@
         var htmls = [],
             tpl = TrimPath.parseTemplate('<li><a {if href} href="#${href}"{/if}>${name}</a></li>');
         result.forEach(function(item){
-            htmls.push(tpl.process({href:item.childs&&item.childs.length?formatPath(item.path):null, name:item.name}));
+            htmls.push(tpl.process({href:item.childs&&item.childs.length?(getFistLink(item.childs)||formatPath(item.path)):null, name:item.name}));
         });
         nnav.innerHTML = htmls.join('');
         if(!location.hash) location.hash = result[0].name;
@@ -124,20 +125,31 @@
                 ii['a_attr'] = {href:'#'+formatPath(ii.link)};
                 ii.icon = 'jstree-file';
                 ii.state.disabled = false;
-                if(hash==formatPath(ii.link)){
-                    ii.state.selected = true;
-                }
+                ii.state.selected = hash==formatPath(ii.link);
             }else{
                 ii.state.disabled = true;
             }
-            if(hash.indexOf(formatPath(ii.path))>=0){
+            if(ii.childs&&ii.childs.length){
                 ii.state.opened = true;
+                Array.prototype.push.apply(list, ii.childs);
+            }
+        }
+        return nodes;
+    };
+    function getFistLink(childs){
+        var list = childs.slice(0);
+        for(var i= 0,ii;i<list.length;i++){
+            ii = list[i];
+            if(ii.link){
+                return formatPath(ii.link);
             }
             if(ii.childs&&ii.childs.length){
                 Array.prototype.push.apply(list, ii.childs);
             }
         }
-        return nodes;
+    };
+    function getRoot(path){
+        return path.split('/')[0].replace('#', '');
     };
     //初始化
     init();
