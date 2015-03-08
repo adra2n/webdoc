@@ -12,10 +12,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
     // Default task.
-    grunt.registerTask('default', ['debug']);
+    grunt.registerTask('default', ['build']);
     grunt.registerTask('doc', ['markdown', 'hierarchy']);
-    grunt.registerTask('debug', ['clean', 'concat', 'copy', 'doc']);
-    grunt.registerTask('build', ['clean','concat', 'copy:images', 'copy:pictures', 'cssmin', 'uglify', 'doc']);
+    grunt.registerTask('build', ['clean', 'concat', 'copy', 'doc']);
     //解析md文件
     grunt.registerMultiTask('markdown', 'Parse md file to html.', function(){
         var mdSrc,data,
@@ -120,6 +119,9 @@ module.exports = function (grunt) {
             },
             pictures: {
                 files: [{ dest: '<%= distdir %>', src: 'pictures/**', expand: true}]
+            },
+            xfiles: {
+                files: [{ dest: '<%= distdir %>', src: 'files/**', expand: true}]
             }
         },
         cssmin:{
@@ -179,8 +181,8 @@ module.exports = function (grunt) {
         },
         watch:{
             src:{
-                files:['src/**','docs/**','pictures/**'],
-                tasks:['debug']
+                files:['src/**','docs/**','pictures/**', 'files/**'],
+                tasks:['build']
             }
         }
     });

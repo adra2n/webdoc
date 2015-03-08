@@ -14,7 +14,7 @@
 
 这是一个段落 [这是超级链接](/#代码规范与最佳实践/js规范/编码规范.html) *这是强调样式* **更强烈的强调样式**
 
-![图片](http://p4.music.126.net/VDPIponBrPeBbfNxh32pkg==/7772447697032196.jpg?param=200y200)
+![图片](pictures/demo.png)
 
 dog | bird | cat
 ----|------|----
