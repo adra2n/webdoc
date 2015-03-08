@@ -56,7 +56,12 @@ module.exports = function (grunt) {
             map[src] = data;
             if(parentData){
                 if(data.name=='order.json'){
-                    parentData.order = grunt.file.readJSON(data.path);
+                    try{
+                        parentData.order = grunt.file.readJSON(data.path);
+                    }catch(e){
+                        console.log('parse order.json failed!');
+                    }
+
                 }else{
                     parentData.childs.push(data);
                 }
