@@ -62,7 +62,7 @@
             htmls.push(tpl.process({href:item.childs&&item.childs.length?(getFistLink(item.childs)||formatPath(item.path)):null, name:item.name}));
         });
         nnav.innerHTML = htmls.join('');
-        if(!location.hash) location.hash = result[0].name;
+        if(!location.hash) location.hash = getFistLink(result[0].childs)||result[0].name;
         Hash.init(onHashChange);
     };
     function showList(list, depth){
