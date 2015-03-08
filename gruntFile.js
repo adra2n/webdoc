@@ -39,20 +39,6 @@ module.exports = function (grunt) {
 
         }, this);
     });
-
-    grunt.registerTask('server', 'Setup a node server.', function(){
-        var http = require('http');
-        var express = require('express');
-        var app = express();
-        var server = http.createServer(app);
-        app.use('/', express.static(__dirname + '/build'));
-
-        server.listen(8080, '0.0.0.0', 511, function() {
-            // // Once the server is listening we automatically open up a browser
-            var open = require('open');
-            open('http://localhost:' + 1688 + '/');
-        });
-    });
     //生成标题层级文件
     grunt.registerMultiTask('hierarchy', 'Get the hierarchy of docs.',function(){
         var conf = this.data.files[0],
@@ -88,7 +74,7 @@ module.exports = function (grunt) {
                 if(ii.childs){
                     if(ii.order&&ii.order.length){
                         ii.childs = ii.childs.sort(function(a, b){
-                            return ii.order.indexOf(a.name)-ii.order.indexOf(b.name);
+                            return ii.order.indexOf(path.basename(a.name, '.html'))-ii.order.indexOf(path.basename(b.name, '.html'));
                         });
                     }
                     Array.prototype.push.apply(alist,ii.childs);
@@ -97,14 +83,25 @@ module.exports = function (grunt) {
             grunt.file.write(conf.dest, JSON.stringify(list.childs), {encoding:'utf8'});
         }
     });
+    //开启server
+    grunt.registerTask('server', 'Setup a node server.', function(){
+        var http = require('http');
+        var express = require('express');
+        var app = express();
+        var server = http.createServer(app);
+        app.use('/', express.static(__dirname + '/build'));
+
+        server.listen(8080, '0.0.0.0', 511, function() {
+            // // Once the server is listening we automatically open up a browser
+            var open = require('open');
+            open('http://localhost:' + 1688 + '/');
+        });
+    });
 
     // Project configuration.
     grunt.initConfig({
         distdir: 'build',
         pkg: grunt.file.readJSON('package.json'),
-        src: {
-            js: ['src/**/*.js']
-        },
         clean: ['<%= distdir %>/*'],
         copy: {
             images: {//复制图片
