@@ -62,7 +62,7 @@ module.exports = function (grunt) {
                 }
             }
             if(ext=='.html'){
-                data.link = src.split(path.sep).slice(1).join('/');
+                data.link = src.replace(/^build/, '');
             }
 
         }, this);
