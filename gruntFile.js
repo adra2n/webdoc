@@ -15,7 +15,7 @@ module.exports = function (grunt) {
     grunt.registerTask('default', ['debug']);
     grunt.registerTask('doc', ['markdown', 'hierarchy']);
     grunt.registerTask('debug', ['clean', 'concat', 'copy', 'doc']);
-    grunt.registerTask('build', ['clean','concat', 'copy:images', 'cssmin', 'uglify', 'doc']);
+    grunt.registerTask('build', ['clean','concat', 'copy:images', 'copy:pictures', 'cssmin', 'uglify', 'doc']);
     //解析md文件
     grunt.registerMultiTask('markdown', 'Parse md file to html.', function(){
         var mdSrc,data,
@@ -117,6 +117,9 @@ module.exports = function (grunt) {
             },
             css: {//复制css
                 files: [{ dest: '<%= distdir %>', src : 'css/**', expand: true, cwd:'src'}]
+            },
+            pictures: {
+                files: [{ dest: '<%= distdir %>', src: 'pictures/**', expand: true}]
             }
         },
         cssmin:{
@@ -176,7 +179,7 @@ module.exports = function (grunt) {
         },
         watch:{
             src:{
-                files:['src/**','docs/**'],
+                files:['src/**','docs/**','pictures/**'],
                 tasks:['debug']
             }
         }
