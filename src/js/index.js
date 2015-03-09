@@ -17,6 +17,7 @@
      * @param hash
      */
     function onHashChange(hash){
+        hash = decodeURIComponent(hash);
         var splits = hash.split('/'),
             mnav = splits.shift(),
             navs = $('a', nnav),
