@@ -8,7 +8,7 @@
      * 初始化
      */
     function init(){
-        $.getJSON('/docs/hierarchy.json', onHierarchyLoad);
+        $.getJSON('/webdoc/docs/hierarchy.json', onHierarchyLoad);
         //$(nnav).click(onNavClick);
 
     };
@@ -45,7 +45,7 @@
             });
         }
         if(/\.html$/.test(hash)){
-            frame.contentWindow.location.replace('/docs/'+hash);
+            frame.contentWindow.location.replace('/webdoc/docs/'+hash);
         }else{
             frame.contentWindow.location.replace('about:blank');
         }
