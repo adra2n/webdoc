@@ -1,0 +1,30 @@
+<Server port="8006" shutdown="SHUTDOWN">
+	<GlobalNamingResources>
+    <Resource name="UserDatabase" auth="Container"
+              type="org.apache.catalina.UserDatabase"
+              description="User database that can be updated and saved"
+              factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+              pathname="conf/tomcat-users.xml" />
+	</GlobalNamingResources>
+	<Service name="Catalina">
+		<Connector port="8080" protocol="HTTP/1.1" 
+				   maxThreads="150" connectionTimeout="20000" 
+				   redirectPort="8443" URIEncoding="utf-8"/>
+		<!-- Define an AJP 1.3 Connector on port 8009 -->
+		<Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
+		<Engine name="Catalina" defaultHost="localhost">
+			<Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+				 resourceName="UserDatabase"/>
+			<Host name="localhost"  appBase="webapps"
+				unpackWARs="true" autoDeploy="false"
+				xmlValidation="false" xmlNamespaceAware="false">
+					<!-- <Context path="" reloadable="true"  docBase="F:\workspace\js">
+						<Valve className="org.jboss.web.rewrite.RewriteValve" />
+					</Context>  -->
+					<Context path=""  docBase="/Users/vinnyoo/develop/workspace/music_week/src/main/webapp">
+							<Valve className="org.jboss.web.rewrite.RewriteValve" />
+					</Context>
+			</Host>
+		</Engine>
+	</Service>
+</Server>
