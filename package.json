@@ -21,6 +21,6 @@
     "markdown": "^0.5.0",
     "marked": "^0.3.3",
     "node-markdown": "^0.1.1",
-    "open": "0.0.3"
+    "open": "6.0.0"
   }
 }
